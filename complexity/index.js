@@ -11,8 +11,8 @@ console.log(myPureFunction(2)); // (2 * 2) + 1 = 5
 
 // OBJECT
 const myObject = {
-  intercept: 1,
   slope: 2,
+  intercept: 1,
   y(x) {
     return (x * this.slope) + this.intercept;
   },
