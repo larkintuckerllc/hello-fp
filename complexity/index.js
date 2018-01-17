@@ -11,10 +11,10 @@ console.log(myFunction(2)); // (2 * 2) + 1 = 5
 
 // OBJECT
 const myObject = {
-  base: 1,
-  factor: 2,
+  intercept: 1,
+  slope: 2,
   y(x) {
-    return (x * this.factor) + this.base;
+    return (x * this.slope) + this.intercept;
   },
 };
 
@@ -22,58 +22,63 @@ const myObject = {
 console.log('object');
 console.log(myObject.y(1)); // (1 * 2) + 1 = 3
 console.log(myObject.y(2)); // (2 * 2) + 1 = 5
-myObject.base = 3;
-console.log(myObject.y(1)); // (1 * 2) + 3 = 5
-console.log(myObject.y(2)); // (2 * 2) + 3 = 7
+myObject.intercept = 3;
+myObject.slope = 4;
+console.log(myObject.y(1)); // (1 * 4) + 3 = 7
+console.log(myObject.y(2)); // (2 * 4) + 3 = 11
 
 // FACTORY FUNCTION
-const myFactoryFunction = base => (factor) => {
-  let myBase = base;
-  let myFactor = factor;
+const myFactoryFunction = ({ slope = 2, intercept = 1 } = { slope: 2, intercept: 1 }) => {
+  let myIntercept = intercept;
+  let mySlope = slope;
   return ({
-    setBase(value) {
-      myBase = value;
+    setIntercept(value) {
+      myIntercept = value;
+      return this;
     },
-    setFactor(value) {
-      myFactor = value;
+    setSlope(value) {
+      mySlope = value;
+      return this;
     },
     y(x) {
-      return (x * myFactor) + myBase;
+      return (x * mySlope) + myIntercept;
     },
   });
 };
 
 // FACTORY FUNCTION USAGE
-console.log('factor function');
-const myFactoryObject1 = myFactoryFunction(1)(2);
-console.log(myFactoryObject1.y(1)); // (1 * 2) + 1 = 3
-console.log(myFactoryObject1.y(2)); // (2 * 2) + 1 = 5
-myFactoryObject1.setBase(3);
-console.log(myFactoryObject1.y(1)); // (1 * 2) + 3 = 5
-console.log(myFactoryObject1.y(2)); // (2 * 2) + 3 = 7
+console.log('slope function');
+const myFactoryObjectA = myFactoryFunction();
+console.log(myFactoryObjectA.y(1)); // (1 * 2) + 1 = 3
+console.log(myFactoryObjectA.y(2)); // (2 * 2) + 1 = 5
+myFactoryObjectA.setIntercept(3).setSlope(4);
+console.log(myFactoryObjectA.y(1)); // (1 * 4) + 3 = 7
+console.log(myFactoryObjectA.y(2)); // (2 * 4) + 3 = 11
 
 // FACTORY FUNCTION USAGE
-console.log('factor function');
-const myFactoryObject2 = myFactoryFunction(2)(3);
-console.log(myFactoryObject2.y(1)); // (1 * 3) + 2 = 5
-console.log(myFactoryObject2.y(2)); // (2 * 3) + 2 = 8
-myFactoryObject2.setBase(3);
-console.log(myFactoryObject2.y(1)); // (1 * 3) + 3 = 6
-console.log(myFactoryObject2.y(2)); // (2 * 3) + 3 = 9
+console.log('slope function');
+const myFactoryObjectB = myFactoryFunction({ slope: 3, intercept: 2 });
+console.log(myFactoryObjectB.y(1)); // (1 * 3) + 2 = 5
+console.log(myFactoryObjectB.y(2)); // (2 * 3) + 2 = 8
+myFactoryObjectB.setIntercept(3).setSlope(4);
+console.log(myFactoryObjectB.y(1)); // (1 * 4) + 3 = 7
+console.log(myFactoryObjectB.y(2)); // (2 * 4) + 3 = 11
 
 // FUNCTIONAL MIXIN
-const myFunctionalMixin = base => factor => (o) => {
-  let myBase = base;
-  let myFactor = factor;
+const myFunctionalMixin = ({ slope = 2, intercept = 1 } = { slope: 2, intercept: 1 }) => (o) => {
+  let myIntercept = intercept;
+  let mySlope = slope;
   return Object.assign({}, o, {
-    setBase(value) {
-      myBase = value;
+    setIntercept(value) {
+      myIntercept = value;
+      return this;
     },
-    setFactor(value) {
-      myFactor = value;
+    setSlope(value) {
+      mySlope = value;
+      return this;
     },
     y(x) {
-      return (x * myFactor) + myBase;
+      return (x * mySlope) + myIntercept;
     },
   });
 };
@@ -90,38 +95,40 @@ const objectB = {
 
 // FUNCTIONAL MIXIN USAGE
 console.log('functional mixin');
-const myFunctionalMixinObjectA1 = myFunctionalMixin(1)(2)(objectA);
-myFunctionalMixinObjectA1.eat(); // Eat an apple
-console.log(myFunctionalMixinObjectA1.y(1)); // (1 * 2) + 1 = 3
-console.log(myFunctionalMixinObjectA1.y(2)); // (2 * 2) + 1 = 5
-myFunctionalMixinObjectA1.setBase(3);
-console.log(myFunctionalMixinObjectA1.y(1)); // (1 * 2) + 3 = 5
-console.log(myFunctionalMixinObjectA1.y(2)); // (2 * 2) + 3 = 7
+const myFunctionalMixinObjectA = myFunctionalMixin()(objectA);
+myFunctionalMixinObjectA.eat(); // Eat an apple
+console.log(myFunctionalMixinObjectA.y(1)); // (1 * 2) + 1 = 3
+console.log(myFunctionalMixinObjectA.y(2)); // (2 * 2) + 1 = 5
+myFunctionalMixinObjectA.setIntercept(3).setSlope(4);
+console.log(myFunctionalMixinObjectA.y(1)); // (1 * 4) + 3 = 7
+console.log(myFunctionalMixinObjectA.y(2)); // (2 * 4) + 3 = 11
 
 // FUNCTIONAL MIXIN USAGE
 console.log('functional mixin');
-const myFunctionalMixinObjectB2 = myFunctionalMixin(2)(3)(objectB);
-myFunctionalMixinObjectB2.drink(); // Drink a beverage
-console.log(myFunctionalMixinObjectB2.y(1)); // (1 * 3) + 2 = 5;
-console.log(myFunctionalMixinObjectB2.y(2)); // (2 * 3) + 2 = 8;
-myFunctionalMixinObjectB2.setBase(3);
-console.log(myFunctionalMixinObjectB2.y(1)); // (1 * 3) + 3 = 6
-console.log(myFunctionalMixinObjectB2.y(2)); // (2 * 3) + 3 = 9
+const myFunctionalMixinObjectB = myFunctionalMixin({ slope: 3, intercept: 2 })(objectB);
+myFunctionalMixinObjectB.drink(); // Drink a beverage
+console.log(myFunctionalMixinObjectB.y(1)); // (1 * 3) + 2 = 5;
+console.log(myFunctionalMixinObjectB.y(2)); // (2 * 3) + 2 = 8;
+myFunctionalMixinObjectB.setIntercept(3).setSlope(4);
+console.log(myFunctionalMixinObjectB.y(1)); // (1 * 4) + 3 = 7
+console.log(myFunctionalMixinObjectB.y(2)); // (2 * 4) + 3 = 11
 
 // CLASS
 class MyClass {
-  constructor(base, factor) {
-    this.base = base;
-    this.factor = factor;
+  constructor({ slope = 2, intercept = 1 } = { slope: 2, intercept: 1 }) {
+    this.intercept = intercept;
+    this.slope = slope;
   }
-  setBase(base) {
-    this.base = base;
+  setIntercept(intercept) {
+    this.intercept = intercept;
+    return this;
   }
-  setFactor(factor) {
-    this.factor = factor;
+  setSlope(slope) {
+    this.slope = slope;
+    return this;
   }
   y(x) {
-    return (x * this.factor) + this.base;
+    return (x * this.slope) + this.intercept;
   }
 }
 class ClassA extends MyClass {
@@ -137,20 +144,20 @@ class ClassB extends MyClass {
 
 // CLASS USAGE
 console.log('class');
-const myClassObjectA1 = new ClassA(1, 2);
-myClassObjectA1.eat(); // Eat an apple
-console.log(myClassObjectA1.y(1)); // (1 * 2) + 1 = 3
-console.log(myClassObjectA1.y(2)); // (2 * 2) + 1 = 5
-myClassObjectA1.setBase(3);
-console.log(myClassObjectA1.y(1)); // (1 * 2) + 3 = 5
-console.log(myClassObjectA1.y(2)); // (2 * 2) + 3 = 7
+const myClassObjectA = new ClassA();
+myClassObjectA.eat(); // Eat an apple
+console.log(myClassObjectA.y(1)); // (1 * 2) + 1 = 3
+console.log(myClassObjectA.y(2)); // (2 * 2) + 1 = 5
+myClassObjectA.setIntercept(3).setSlope(4);
+console.log(myClassObjectA.y(1)); // (1 * 4) + 3 = 7
+console.log(myClassObjectA.y(2)); // (2 * 4) + 3 = 11
 
 // CLASS USAGE
 console.log('class');
-const myClassObjectB2 = new ClassB(2, 3);
-myClassObjectB2.drink(); // Drink a beverage
-console.log(myClassObjectB2.y(1)); // (1 * 3) + 2 = 5
-console.log(myClassObjectB2.y(2)); // (2 * 3) + 2 = 8
-myClassObjectB2.setBase(3);
-console.log(myClassObjectB2.y(1)); // (1 * 3) + 3 = 6
-console.log(myClassObjectB2.y(2)); // (2 * 3) + 3 = 9
+const myClassObjectB = new ClassB({ slope: 3, intercept: 2 });
+myClassObjectB.drink(); // Drink a beverage
+console.log(myClassObjectB.y(1)); // (1 * 3) + 2 = 5
+console.log(myClassObjectB.y(2)); // (2 * 3) + 2 = 8
+myClassObjectB.setIntercept(3).setSlope(4);
+console.log(myClassObjectB.y(1)); // (1 * 4) + 3 = 7
+console.log(myClassObjectB.y(2)); // (2 * 4) + 3 = 11
